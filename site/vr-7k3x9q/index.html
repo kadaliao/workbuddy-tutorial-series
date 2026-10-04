@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>WorkBuddy 视频审阅</title>
+<style>
+:root{--bg:#fafaf8;--fg:#1f2328;--mut:#6b7280;--card:#fff;--line:#e5e7eb;--acc:#2563eb;--warn:#b45309;--warnbg:#fef3c7}
+@media(prefers-color-scheme:dark){:root{--bg:#16181c;--fg:#e6e8eb;--mut:#9aa3af;--card:#1e2126;--line:#2f343b;--acc:#7aa7ff;--warn:#fbbf24;--warnbg:#3a2f12}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.7 -apple-system,"PingFang SC","Noto Sans SC",sans-serif}
+header{padding:20px 16px 8px;max-width:960px;margin:auto}h1{font-size:22px;margin:0}header p{color:var(--mut);margin:4px 0 0;font-size:14px}
+nav{position:sticky;top:0;background:var(--bg);border-bottom:1px solid var(--line);z-index:5}
+nav div{max-width:960px;margin:auto;display:flex;gap:4px;overflow-x:auto;padding:8px 12px}
+nav button{border:0;background:none;color:var(--mut);padding:8px 12px;border-radius:8px;font:inherit;font-size:15px;white-space:nowrap;cursor:pointer}
+nav button.on{background:var(--card);color:var(--fg);box-shadow:0 0 0 1px var(--line)}
+main{max-width:960px;margin:auto;padding:16px}section{display:none}section.on{display:block}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;margin:12px 0}
+.warn{background:var(--warnbg);border-color:transparent;color:var(--warn)}
+.warn b{color:inherit}
+.md h1{font-size:22px}.md h2{font-size:19px;margin-top:28px;border-bottom:1px solid var(--line);padding-bottom:4px}.md h3{font-size:17px}
+.md table{border-collapse:collapse;display:block;overflow-x:auto;font-size:14px}.md th,.md td{border:1px solid var(--line);padding:6px 10px;vertical-align:top}
+.md code{background:var(--card);border:1px solid var(--line);padding:1px 5px;border-radius:4px;font-size:.9em}.md a{color:var(--acc);word-break:break-all}
+.md blockquote{margin:8px 0;padding-left:12px;border-left:3px solid var(--line);color:var(--mut)}
+label.t{display:flex;gap:10px;align-items:flex-start;padding:6px 0}label.t input{margin-top:7px;width:18px;height:18px}
+audio{width:100%}
+#q{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--fg);font:inherit;margin-bottom:12px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+.grid figure{margin:0;background:var(--card);border:1px solid var(--line);border-radius:10px;overflow:hidden;cursor:zoom-in}
+.grid img{width:100%;aspect-ratio:16/10;object-fit:cover;object-position:top;display:block;background:#0001}
+.grid figcaption{padding:6px 10px;font-size:13px;color:var(--mut)}
+#lb{position:fixed;inset:0;background:#000d;display:none;align-items:center;justify-content:center;z-index:20;padding:12px}#lb img{max-width:100%;max-height:100%}#lb.on{display:flex}
+.muted{color:var(--mut);font-size:14px}
+</style></head><body>
+<header><h1>WorkBuddy 系列视频 · 审阅页</h1><p>基于 WorkBuddy 5.6.2 · 更新于 2026-10-04 21:23 · 本页含你的工作截图，链接请勿外传</p></header>
+<nav><div id="tabs"></div></nav>
+<main>
+<section id="todo">
+ <div class="card warn"><b>需要你本人处理：</b>资料库里的「本周周报」是实测时点“分享”图标自动上传的，且已出现在「我分享的」。请在 WorkBuddy「资料库 → 最近 → 我分享的」或「设置 → 数据管理」里查看链接状态并取消分享/删除。我没有点过复制链接，也没删。</div>
+ <div class="card"><b>请确认（勾选只存在你浏览器里）</b>
+  <label class="t"><input type="checkbox" data-k="voice"><span>样音（见「样音」页）的声音和语气 OK</span></label>
+  <label class="t"><input type="checkbox" data-k="script"><span>第 1 集脚本口吻 OK（见「第1集脚本」）</span></label>
+  <label class="t"><input type="checkbox" data-k="plan"><span>12 集 + 番外的集数和顺序 OK（见「系列规划」）</span></label>
+  <label class="t"><input type="checkbox" data-k="v4"><span>第 1 集 v4 成片 OK（见「第1集视频」）</span></label>
+  <label class="t"><input type="checkbox" data-k="intro"><span>系列片头 OK（见「系列片头」）</span></label>
+  <label class="t"><input type="checkbox" data-k="v7"><span>新配音（Charon）和音乐音量 OK（见「第1集视频」v7）</span></label>
+ </div>
+ <div class="card"><b>现状</b><div class="md" id="status"></div></div>
+</section>
+<section id="plan"><div class="card md" data-md="md/10-series-plan.md"></div></section>
+<section id="intro"><div class="card"><b>系列统一片头（每集通用）</b><p class="muted">13 秒。前 6 秒是真实操作快剪（写需求 → 发送 → 它自己干活 → 你来把关），后 7 秒是系列标题卡，最后一行“第 N 集 · 本集标题”每集替换。配音换成 Gemini 3.8 Flash TTS（音色 Charon），背景音乐 Focus on Yourself。</p><video controls playsinline preload="metadata" style="width:100%;border-radius:8px;background:#000" src="intro-ep01-v2-bgm.mp4"></video></div><div class="card md" data-md="md/00-系列片头.md"></div></section>
+<section id="vid"><div class="card"><b>第 1 集 · 完整版 v7（当前版本）</b><p class="muted">3 分 46 秒 = 13 秒片头 + 正片。相对 v6：① 全片配音换成 Gemini 3.8 Flash TTS 的 Charon 音色（成熟男声，“老手带新手”的口吻），12 段逐段听验过，没有错读、多念、漏念；字幕、点击和标注都按新配音重新对齐。② 背景音乐换成你选的 Focus on Yourself，整体调大：讲话时配乐约比人声低 11～12 dB（v6 是约 19 dB），人声出现时的避让也调轻了。画面内容没改。</p><video controls playsinline preload="metadata" style="width:100%;border-radius:8px;background:#000" src="ep01-v7.mp4"></video>
+<p class="muted">音量比例如果还想再调，告诉我“音乐再大/再小一点”就行。</p></div><div class="card md" data-md="md/bgm-README.md"></div></section>
+<section id="ep2v"><div class="card"><b>第 2 集 · 先把门锁好：权限、工作空间与备份（v1）</b><p class="muted">2 分 46 秒，含系列片头与背景音乐，Charon 配音（7 段逐段听验通过）。全部实机录制：让它批量删 4 个 txt，它先列出文件、提示风险、给选项，我选“取消”，一个没删；单删一个测试文件时它没问就删了，但移进了废纸篓、可还原——这是安全中心的“删除保护”，视频里如实讲了。定时任务对话框默认红色“允许完全访问”，演示关掉后取消，没有保存任何定时任务。</p><video controls playsinline preload="metadata" style="width:100%;border-radius:8px;background:#000" src="ep02-v1.mp4"></video></div><div class="card md" data-md="md/ep02-把门锁好-权限与备份.md"></div></section>
+<section id="ep3v"><div class="card"><b>第 3 集 · 一句话说清需求（v1）</b><p class="muted">2 分 10 秒，含片头与配乐，Charon 配音（6 段听验通过）。开场对比是真实生成的：只说“帮我写个周报”时，它自己分了五段，还多写了“线上线索收集恢复正常”“交付节奏和责任边界已明确”等材料里没有的话；对照的是第 1 集说清楚需求的版本。录这一跑之前把演示技能临时移开了（不然它会自动套用技能），录完已放回。增强提示词、恢复原文、加号添加文件都是实录。</p><video controls playsinline preload="metadata" style="width:100%;border-radius:8px;background:#000" src="ep03-v1.mp4"></video></div><div class="card md" data-md="md/ep03-一句话说清需求.md"></div></section>
+<section id="ep4v"><div class="card"><b>第 4 集 · 默认、计划、仅问答（v1）</b><p class="muted">2 分 15 秒，含片头与配乐，Charon 配音（7 段听验通过）。全部实录：仅问答模式下问“会不会删文件”，它只给思路并说明是只读模式，文件夹 4 个文件没变；计划模式下它先读数据、问了 4 个设计问题（选推荐项），写出计划后问“确认按此计划执行？”，点开始执行约 1 分 15 秒生成带图表的 Excel；最后演示点 × 退出模式。</p><video controls playsinline preload="metadata" style="width:100%;border-radius:8px;background:#000" src="ep04-v1.mp4"></video></div><div class="card md" data-md="md/ep04-三种模式.md"></div></section>
+<section id="ep5v"><div class="card"><b>第 5 集 · 验收三步：它做对了吗（v1）</b><p class="muted">2 分 15 秒，含片头与配乐，Charon 配音（7 段听验通过）。陷阱是真的：数据表里“客户投诉数”本周留空、指令也不加两句限制。实际结果：它没有编数字，标了“未填报”；但加工了几句日报里没有的话（“均在当周完成响应”“恢复线上线索正常收集”“已完成多家比价”），下周计划多了两条。点名指出后它改了点名的地方，并主动说明没点名的措辞照留，还留下一个空行——所以讲“改完再看一遍”。</p><video controls playsinline preload="metadata" style="width:100%;border-radius:8px;background:#000" src="ep05-v1.mp4"></video></div><div class="card md" data-md="md/ep05-验收三步.md"></div></section>
+<section id="ep6v"><div class="card"><b>第 6 集 · 把做过的活存成技能和斜杠指令（v1）</b><p class="muted">2 分 15 秒，含片头与配乐，Charon 配音（8 段听验通过）。全部实录：先完整写一次需求生成周报，满意后让它封装成技能“周报四段式”（约 1 分钟）；在技能页“我安装的 → 用户自定义”看到它；新任务里敲 / 选技能再补一句，它按四段结构写好周报（约 3 分钟）；让它创建斜杠指令“/周报速写”（约 1.5 分钟），新开任务敲 / 就在指令组里看到了（这次没遇到需要重新加载的情况，口播里保留了“没看到就重开任务或重启”的提示）。另有一段第 3 集录制时的真实情况：只说“帮我写个周报”，它自己加载了之前存的周报技能。</p><video controls playsinline preload="metadata" style="width:100%;border-radius:8px;background:#000" src="ep06-v1.mp4"></video></div><div class="card md" data-md="md/ep06-技能与斜杠指令.md"></div></section>
+<section id="ep7v"><div class="card"><b>第 7 集 · 专家与专家团（v1）</b><p class="muted">1 分 53 秒，含片头与配乐，Charon 配音（7 段听验通过）。实录：从专家中心找到“内容创作专家”，点召唤后输入框出现专家标识并预填一个示例需求；换成自己的需求，让它把周报改写成 100 字以内的领导汇报，约 1 分钟给出 95 字汇报，数字与周报一致并注明出处。专家团只打开看了成员（主理人 + 6 位成员），没有运行；“我的专家”目前为空，只展示了创建入口。</p><video controls playsinline preload="metadata" style="width:100%;border-radius:8px;background:#000" src="ep07-v1.mp4"></video></div><div class="card md" data-md="md/ep07-专家与专家团.md"></div></section>
+<section id="ep8v"><div class="card"><b>第 8 集 · 文件、资料库与云文档（v1）</b><p class="muted">2 分 03 秒，含片头与配乐，Charon 配音（8 段听验通过）。实录：工作空间、加号→添加文件（本地/资料库/腾讯文档/ima/乐享）、输入框打 @ 直接列出文件、从 Finder 拖文件进输入框变成文件胶囊；成品预览右上四个按钮，“更多”里打开文件夹/另存为，“上传到云端”的四个去处（都只展开没选）；“分享”只用了之前的静帧讲坑，录制时没有点；资料库与“设置→数据管理→分享的文件”。资料库页他人用户名所在的“所有者”列全程遮挡。</p><video controls playsinline preload="metadata" style="width:100%;border-radius:8px;background:#000" src="ep08-v1.mp4"></video></div><div class="card md" data-md="md/ep08-文件资料库与云文档.md"></div></section>
+<section id="ep9v"><div class="card"><b>第 9 集 · 定时任务：让它每天自己上班（v1）</b><p class="muted">2 分 08 秒，含片头与配乐，Charon 配音（8 段听验通过）。全程实录：新建只读的“素材检查演示”定时任务（工作空间 周报素材），对话框里权限默认红色“允许完全访问”，演示关掉改回默认权限；频率用“单次”，几分钟后到点它自己运行成功，生成 文件清单.md 并注明只读未改动；最后展示频率选项（每天/每周/双周/每月/每年）并删除了这个演示任务。系统自带的那条已暂停任务没有动。</p><video controls playsinline preload="metadata" style="width:100%;border-radius:8px;background:#000" src="ep09-v1.mp4"></video></div><div class="card md" data-md="md/ep09-定时任务.md"></div></section>
+<section id="ep12v"><div class="card"><b>第 12 集 · 个性化、记忆与模型（v1）</b><p class="muted">1 分 53 秒，含片头与配乐，Charon 配音（7 段听验通过）。实录：设置→个性化里现场写一段自定义指令（显示 1500 字上限），录完已清空恢复原状（原本就是空的）；记忆与进化页只展示开关和说明，没有打开记忆列表；输入框右下“快速”菜单展示三档、倍率、具名模型和 Max 模式，没有切换。头像菜单里的昵称和积分余额已遮挡。</p><video controls playsinline preload="metadata" style="width:100%;border-radius:8px;background:#000" src="ep12-v1.mp4"></video></div><div class="card md" data-md="md/ep12-个性化记忆与模型.md"></div></section>
+<section id="ep13v"><div class="card"><b>番外 · 积分到底是怎么花掉的（v1）</b><p class="muted">1 分 34 秒，含片头与配乐，Charon 配音（6 段听验通过）。画面复用第 1 集的真实执行（预计消耗 0.36～12.11 → 过程中已消耗 → 共消耗 2.4），加上设置里的“套餐与积分”页（账户余额、奖励积分数字已遮挡，没有点升级或购买）。价格只说“以官网当天为准”。</p><video controls playsinline preload="metadata" style="width:100%;border-radius:8px;background:#000" src="ep13-番外-v1.mp4"></video></div><div class="card md" data-md="md/ep13-番外-积分怎么花.md"></div></section>
+<section id="ep11v"><div class="card"><b>第 11 集 · 连接器（v1）</b><p class="muted">2 分 05 秒，含片头与配乐，Charon 配音（8 段听验通过）。腾讯文档连接器由你本人授权（授权过程没录）。实录：连接器页与输入框里的连接器菜单；授权说明页（读取、编辑和管理两项权限）；让它“先出草稿、确认后再创建”，它列出虚构会议纪要草稿等我确认，确认后只新建了“连接器测试”这一个文档；新任务里读取该文档三句话总结；卡片绿点与“解绑”位置（只悬停没点）。执行过程中出现的本机用户名路径、文档链接和 file_id 都已打码，成片逐 0.4 秒做过文字识别复查。</p><video controls playsinline preload="metadata" style="width:100%;border-radius:8px;background:#000" src="ep11-v1.mp4"></video></div><div class="card md" data-md="md/ep11-连接器.md"></div></section>
+<section id="ep10v"><div class="card"><b>第 10 集 · 手机遥控电脑（v1）</b><p class="muted">2 分 19 秒，含片头与配乐，Charon 配音（6 段听验通过）。手机画面是你录的两段：第一段是云端模式，它回答运行在云端沙箱、访问不到电脑上的文件（正好做对比）；第二段切到连接电脑，发只读摘要任务，电脑侧栏同步出现“本地任务”，摘要回到手机；再让它删文件清单，手机上先弹“移到废纸篓/取消”，再弹“是否允许执行此操作”（你点了始终允许，视频里如实说明并建议选“允许”），最后文件进了废纸篓。电脑端录了助理页、多端协同面板的两个开关（二维码已遮）和设置里的“允许锁屏运行”。手机上的设备名、输入法粘贴提示（含设备名）都已遮挡，开头的微信聊天列表已剪掉。</p><video controls playsinline preload="metadata" style="width:100%;border-radius:8px;background:#000" src="ep10-v1.mp4"></video></div><div class="card md" data-md="md/ep10-手机遥控电脑.md"></div></section>
+<section id="ep1"><div class="card md" data-md="md/ep01-装好并跑通第一个任务.md"></div></section>
+<section id="eps"><div class="card md" data-md="md/ep02-把门锁好-权限与备份.md"></div><div class="card md" data-md="md/ep03-一句话说清需求.md"></div><div class="card md" data-md="md/ep04-三种模式.md"></div><div class="card md" data-md="md/ep05-验收三步.md"></div><div class="card md" data-md="md/ep06-技能与斜杠指令.md"></div></section>
+<section id="eps2"><div class="card md" data-md="md/ep07-专家与专家团.md"></div><div class="card md" data-md="md/ep08-文件资料库与云文档.md"></div><div class="card md" data-md="md/ep09-定时任务.md"></div><div class="card md" data-md="md/ep10-手机遥控电脑.md"></div><div class="card md" data-md="md/ep11-连接器.md"></div><div class="card md" data-md="md/ep12-个性化记忆与模型.md"></div><div class="card md" data-md="md/ep13-番外-积分怎么花.md"></div></section>
+<section id="voice"><div class="card"><b>第 1 集开场样音</b><p class="muted">say-as-me 合成，语气：自然亲切、语速适中。约 11 秒。</p><audio controls src="audio/ep01-A-开场-样音.wav"></audio>
+<p>“这是一份周报。三份日报、一张数据表，两分钟，它自己读完、自己对数、自己排好版。今天这集，我带你从零装好 WorkBuddy，跑通这第一个任务。”</p></div></section>
+<section id="shots"><input id="q" placeholder="按编号或关键词筛选，如 权限 / 24 / 设置"><div class="grid" id="grid"></div></section>
+<section id="log"><div class="card md" data-md="md/03-hands-on-log.md"></div></section>
+<section id="facts"><div class="card md" data-md="md/01-official-facts.md"></div></section>
+<section id="brief"><div class="card md" data-md="md/00-brief.md"></div></section>
+</main>
+<div id="lb"><img alt=""></div>
+<script src="marked.min.js"></script>
+<script>
+const tabs=[["todo","待你确认"],["plan","系列规划"],["intro","系列片头"],["vid","第1集视频"],["ep2v","第2集"],["ep3v","第3集"],["ep4v","第4集"],["ep5v","第5集"],["ep6v","第6集"],["ep7v","第7集"],["ep8v","第8集"],["ep9v","第9集"],["ep10v","第10集"],["ep11v","第11集"],["ep12v","第12集"],["ep13v","番外"],["ep1","第1集脚本"],["eps","第2–6集脚本"],["eps2","第7–12集+番外脚本"],["voice","样音"],["shots","截图墙"],["log","实测记录"],["facts","官方核查"],["brief","项目要求"]];
+const tb=document.getElementById('tabs');
+function show(id){document.querySelectorAll('section').forEach(s=>s.classList.toggle('on',s.id===id));[...tb.children].forEach(b=>b.classList.toggle('on',b.dataset.id===id));location.hash=id;scrollTo(0,0);load(id)}
+tabs.forEach(([id,n])=>{const b=document.createElement('button');b.textContent=n;b.dataset.id=id;b.onclick=()=>show(id);tb.appendChild(b)});
+const done={};
+async function load(id){if(done[id])return;done[id]=1;
+ for(const el of document.querySelectorAll('#'+id+' [data-md]')){try{const r=await fetch(el.dataset.md);el.innerHTML=marked.parse(await r.text());}catch(e){el.textContent='加载失败：'+e}}}
+document.getElementById('status').innerHTML=marked.parse(`
+- WorkBuddy 5.6.2 已装好并登录，52+ 张实机截图已备好（见「截图墙」）。
+- 已完成：官方事实核查、实机体验记录、12 集系列规划、第 1 集脚本，第 1 集成片（见「第1集视频」）。
+- 全部完成：第 1～12 集和番外，每集一个标签，含片头、配乐、Charon 配音。\n- 第 2～6 集脚本已写好（见「第2–6集脚本」），第 7～12 集和番外脚本已写好（见「第7–12集+番外脚本」）。正在按顺序制作第 2 集起的视频；第 10 集（手机）和第 11 集（连接器授权）需要你配合。
+- 实测与官方文档不一致处：定时任务页实际叫「定时任务」；计划/仅问答是两个开关；模型切换在输入框右下角；新建工作空间只能在 ~/WorkBuddy 下自动建。
+- 安全提醒（视频里会讲）：点产物「分享」会立刻自动上传；定时任务对话框权限默认是红色「允许完全访问」。`);
+fetch('shots.json').then(r=>r.json()).then(list=>{const g=document.getElementById('grid');
+ list.forEach(f=>{const n=f.replace(/\.png$/,'');const fig=document.createElement('figure');fig.dataset.n=n;fig.innerHTML=`<img loading="lazy" src="shots/${encodeURIComponent(f)}"><figcaption>${n}</figcaption>`;fig.onclick=()=>{lb.querySelector('img').src=fig.querySelector('img').src;lb.classList.add('on')};g.appendChild(fig)});
+ q.oninput=()=>{const v=q.value.trim();g.querySelectorAll('figure').forEach(x=>x.style.display=x.dataset.n.includes(v)?'':'none')}});
+lb.onclick=()=>lb.classList.remove('on');
+document.querySelectorAll('input[data-k]').forEach(c=>{try{c.checked=localStorage.getItem('vr-'+c.dataset.k)==='1'}catch(e){}c.onchange=()=>{try{localStorage.setItem('vr-'+c.dataset.k,c.checked?'1':'0')}catch(e){}}});
+show((location.hash||'#todo').slice(1)||'todo');
+</script></body></html>

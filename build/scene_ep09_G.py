@@ -1,0 +1,30 @@
+import sys; sys.path.insert(0,'.')
+from wslib import *
+O="/Volumes/Data-External/workspace/cc-test/wbd/video/footage/ep09"
+def tgt(b,p=8): return [b[0]-p,b[1]-p,b[2]+2*p,b[3]+2*p]
+def G9(h):
+    h.pause(0.8)
+    h.move_to(600,113,dur=0.7,target=[284,94,1136,32],label="点开任务"); h.pause(0.4); h.click(); h.pause(1.8)
+    b=ocr.find("执行频率"); h.move_to(b[0]+120,b[1]+8,dur=0.7,target=[b[0]-6,b[1]-8,240,b[3]+16],label="改频率"); h.pause(0.4); h.click(); h.pause(1.2)
+    s=ocr.find("单次",exact=True,region=[280,180,300,160])
+    print("single", s)
+    if s: h.move_to(s[0]+100,s[1]+8,dur=0.6); h.pause(0.3); h.click(); h.pause(1.2)
+    h.log("mark",text="options")
+    o=ocr.find("每周",exact=True); print("opts", o)
+    if o: h.move_to(o[0]+40,o[1]+8,dur=0.6,target=[o[0]-20,o[1]-80,200,200],label="每天、每周、每月……"); h.pause(3.0)
+    h.esc(); h.pause(0.4); h.esc(); h.pause(0.4)
+    b=ocr.find("取消",exact=True,region=[1250,0,150,50]); h.move_to(*C(b),dur=0.6); h.pause(0.3); h.click(); h.pause(1.4)
+    if ocr.find("确定") or ocr.find("放弃"):
+        d=ocr.find("放弃") or ocr.find("确定"); h.move_to(*C(d)); h.click(); h.pause(1.2)
+    h.move_to(900,113,dur=0.6); h.pause(0.6)
+    h.move_to(1407,110,dur=0.6,target=[1395,98,26,26],label="演示用，删掉"); h.pause(0.4); h.click(); h.pause(1.0)
+    d=ocr.find("删除",region=[1250,150,200,60]); h.move_to(*C(d),dur=0.5); h.pause(0.4); h.click(); h.pause(1.2)
+    c=ocr.find("删除定时任务")
+    print("confirm", c)
+    if c: h.move_to(*C(c),dur=0.6,target=[c[0]-10,c[1]-8,c[2]+20,c[3]+16],label="确认删除"); h.pause(0.8); h.click(); h.pause(1.6)
+    h.log("mark",text="deleted"); h.move_to(800,300,dur=0.6); h.pause(2.0)
+    print("remaining", ocr.find("素材检查演示",region=[280,60,1140,100]))
+subprocess.run(["osascript","-e",'tell application "WorkBuddy" to activate']); time.sleep(0.5)
+h=Human(); b=ocr.find("素材检查演示",region=[280,0,300,40])
+if b: h.move_to(1305,30); h.click(); time.sleep(1.2)
+scene("G-改频率与删除",G9,outdir=O,extra={"mask_regions":[{"name":"侧栏用户行","rect":[8,795,180,55]}]})
