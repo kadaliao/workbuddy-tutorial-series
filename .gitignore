@@ -1,0 +1,21 @@
+# 大文件与可再生成产物
+*.mp4
+*.MP4
+*.mov
+*.wav
+*.mp3
+*.avi
+footage/
+build/venv/
+build/__pycache__/
+build/ep[0-9]*/
+build/intro*/
+build/chk*/
+build/test/
+build/site_archive/
+build/*.log
+intro/
+audio/**/*.wav
+site/vr-7k3x9q/shots/
+site/vr-7k3x9q/audio/
+.DS_Store

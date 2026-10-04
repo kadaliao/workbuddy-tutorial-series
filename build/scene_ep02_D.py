@@ -1,0 +1,30 @@
+import sys; sys.path.insert(0,'.')
+from human import *
+O="/Volumes/Data-External/workspace/cc-test/wbd/video/footage/ep02"
+USER=[8,795,180,55]
+def D(h):
+    h.pause(0.8)
+    h.move_to(36,826,target=[14,808,160,36],label="左下角头像"); h.pause(0.4); h.click(None,[14,808,160,36]); h.log("mark",text="menu_open"); h.pause(1.0)
+    h.move_to(70,551,dur=0.8,target=[22,536,296,32],label="设置"); h.pause(0.6); h.click(None,[22,536,296,32],hold=0.12); h.log("mark",text="menu_close"); h.pause(1.6)
+    n=subprocess.run(["osascript","-e",'tell application "System Events" to tell process "WorkBuddy" to count windows'],capture_output=True,text=True).stdout.strip()
+    if n != "2":
+        print("FALLBACK cmd-comma"); h.esc(); h.pause(0.3); h.key(43, Quartz.kCGEventFlagMaskCommand); h.pause(1.6)
+    h.move_to(505,635,target=[442,619,200,34],label="安全中心"); h.pause(0.4); h.click(None,[442,619,200,34]); h.pause(1.4)
+    h.move_to(1270,127,target=[664,96,644,62],label="沙箱安全：默认开着"); h.pause(2.6)
+    h.move_to(1000,270,target=[664,176,644,190],label="文件、命令、网络：越界就问你"); h.pause(3.0)
+    h.move_to(1270,396,target=[664,370,644,48],label="自动备份：改文件前先备份"); h.pause(2.4)
+    h.move_to(800,444,target=[756,426,80,36],label="总上限 3000 MB"); h.pause(2.0)
+    h.move_to(1238,444,target=[1184,428,110,34],label="打开备份目录"); h.pause(0.5); h.click(None,[1184,428,110,34]); h.log("mark",text="finder_open"); h.pause(2.6)
+    h.move_to(700,220,dur=0.8); h.pause(2.4)
+    subprocess.run(["osascript","-e",'tell application "Finder" to close Finder window 1']); h.log("mark",text="finder_close")
+    subprocess.run(["osascript","-e",'tell application "WorkBuddy" to activate']); h.pause(1.2)
+    h.move_to(990,500,dur=0.7); h.scroll(520,dur=1.6); h.pause(1.0)
+    subprocess.run(["screencapture","-x","-R80,40,1440,860","/private/tmp/claude-501/d_mid.png"])
+    h.pause(4.0, label=None)
+    h.scroll(720,dur=1.6); h.pause(1.0)
+    subprocess.run(["screencapture","-x","-R80,40,1440,860","/private/tmp/claude-501/d_audit.png"])
+    h.log("mark",text="audit_visible"); h.pause(4.0)
+    h.scroll(-3000,dur=1.2); h.pause(0.6)
+    h.move_to(450,75,dur=0.8); h.pause(0.3); h.click(); h.log("mark",text="settings_close"); h.pause(1.2)
+subprocess.run(["osascript","-e",'tell application "WorkBuddy" to activate']); time.sleep(0.6)
+scene("D-安全中心",D,outdir=O,extra={"mask_regions":[{"name":"侧栏用户行","rect":USER}]})
