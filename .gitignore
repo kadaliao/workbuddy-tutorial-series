@@ -19,3 +19,8 @@ audio/**/*.wav
 site/vr-7k3x9q/shots/
 site/vr-7k3x9q/audio/
 .DS_Store
+
+# 本地交付包与第14集历史缓存；成片和工程包通过 GitHub Release 分发
+delivery/
+*.zip
+audio/ep14clean/
